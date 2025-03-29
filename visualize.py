@@ -291,9 +291,13 @@ if __name__ == '__main__':
     # args = parse_args()
 
     infos = mmcv.load('data/nuScenes/nuscenes_infos_val.pkl')
+    rainIdx = mmcv.load('data/nuScenes/nuscenes_rainIdx_val.pkl')
+
+    count = 0
     idx = len(infos)
-    for i in range(0, idx):
-        if i > 100:
+    for i in rainIdx:
+        count +=1
+        if count > 100:
             break
 
         demo(
@@ -303,6 +307,6 @@ if __name__ == '__main__':
             infos[i],
             i,
             'outputs/det/CRN_r50_256x704_128x128_4key/results_nusc.json',
-            'vis/',
+            'vis/rain',
         )
         

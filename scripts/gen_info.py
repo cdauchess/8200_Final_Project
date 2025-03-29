@@ -6,8 +6,19 @@ from nuscenes.nuscenes import NuScenes
 from nuscenes.utils import splits
 
 
+def isRain(descript):
+    testWord = "rain"
+    testWord2 = "Rain"
+    if testWord in descript:
+        return True
+    elif testWord2 in descript:
+        return True
+    else:
+        return False
+
 def generate_info(nusc, scenes, max_cam_sweeps=6, max_lidar_sweeps=10):
     infos = list()
+    rainIdx = list()
     for cur_scene in tqdm(nusc.scene):
         if cur_scene['name'] not in scenes:
             continue
@@ -21,6 +32,11 @@ def generate_info(nusc, scenes, max_cam_sweeps=6, max_lidar_sweeps=10):
             info['sample_token'] = cur_sample['token']
             info['timestamp'] = cur_sample['timestamp']
             info['scene_token'] = cur_sample['scene_token']
+
+            if isRain(nusc.get('scene', cur_scene['token'])['description']):
+                info['RainScene'] = True #Embed an identifier in the infos file for rain
+                rainIdx.append(len(infos)) #Place the index of the rain scene in this list for easy recall later
+
             cam_names = [
                 'CAM_FRONT', 'CAM_FRONT_RIGHT', 'CAM_BACK_RIGHT',
                 'CAM_BACK', 'CAM_BACK_LEFT', 'CAM_FRONT_LEFT'
@@ -143,21 +159,28 @@ def generate_info(nusc, scenes, max_cam_sweeps=6, max_lidar_sweeps=10):
                 break
             else:
                 cur_sample = nusc.get('sample', cur_sample['next'])
-    return infos
+    return infos, rainIdx
 
 
 def main():
     trainval_nusc = NuScenes(version='v1.0-trainval',
-                             dataroot='./data/nuScenes/',
+                             dataroot='../data/nuScenes/',
                              verbose=True)
     train_scenes = splits.train
     val_scenes = splits.val
-    train_infos_tiny = generate_info(trainval_nusc, train_scenes[:2])
-    mmcv.dump(train_infos_tiny, './data/nuScenes/nuscenes_infos_train-tiny.pkl')
-    train_infos = generate_info(trainval_nusc, train_scenes)
-    mmcv.dump(train_infos, './data/nuScenes/nuscenes_infos_train.pkl')
-    val_infos = generate_info(trainval_nusc, val_scenes)
-    mmcv.dump(val_infos, './data/nuScenes/nuscenes_infos_val.pkl')
+    print('Starting Tiny...')
+    train_infos_tiny, tinyRain = generate_info(trainval_nusc, train_scenes[:2])
+    mmcv.dump(train_infos_tiny, '../data/nuScenes/nuscenes_infos_train-tiny.pkl')
+    print('Starting Train...')
+    train_infos, trainRain = generate_info(trainval_nusc, train_scenes)
+    print('Number of Rain Samples in training set: %i', (len(trainRain)))
+    mmcv.dump(train_infos, '../data/nuScenes/nuscenes_infos_train.pkl')
+    mmcv.dump(trainRain, '../data/nuScenes/nuscenes_rainIdx_train.pkl')
+    print('Starting Val...')
+    val_infos, valRain = generate_info(trainval_nusc, val_scenes)
+    print('Number of Rain Samples in validation set: %i', (len(valRain)))
+    mmcv.dump(val_infos, '../data/nuScenes/nuscenes_infos_val.pkl')
+    mmcv.dump(valRain, '../data/nuScenes/nuscenes_rainIdx_val.pkl')
 
     # test_nusc = NuScenes(version='v1.0-test',
     #                      dataroot='./data/nuScenes/v1.0-test/',
