@@ -36,6 +36,8 @@ def generate_info(nusc, scenes, max_cam_sweeps=6, max_lidar_sweeps=10):
             if isRain(nusc.get('scene', cur_scene['token'])['description']):
                 info['RainScene'] = True #Embed an identifier in the infos file for rain
                 rainIdx.append(len(infos)) #Place the index of the rain scene in this list for easy recall later
+            else:
+                info['RainScene'] = False
 
             cam_names = [
                 'CAM_FRONT', 'CAM_FRONT_RIGHT', 'CAM_BACK_RIGHT',
@@ -56,6 +58,7 @@ def generate_info(nusc, scenes, max_cam_sweeps=6, max_lidar_sweeps=10):
                 sweep_cam_info['is_key_frame'] = cam_data['is_key_frame']
                 sweep_cam_info['height'] = cam_data['height']
                 sweep_cam_info['width'] = cam_data['width']
+                #TODO - Add conditional for a changed file name to load the cleansed images when working with Nuscenes
                 sweep_cam_info['filename'] = cam_data['filename']
                 sweep_cam_info['calibrated_sensor'] = nusc.get(
                     'calibrated_sensor', cam_data['calibrated_sensor_token'])

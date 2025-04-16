@@ -296,8 +296,9 @@ if __name__ == '__main__':
     count = 0
     idx = len(infos)
     for i in rainIdx:
+        print(count)
         count +=1
-        if count > 100:
+        if count > 300:
             break
 
         demo(
@@ -307,6 +308,6 @@ if __name__ == '__main__':
             infos[i],
             i,
             'outputs/det/CRN_r50_256x704_128x128_4key/results_nusc.json',
-            'vis/rain',
+            'vis/rain/',
         )
         
