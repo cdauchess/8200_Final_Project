@@ -16,12 +16,16 @@ def isRain(descript):
     else:
         return False
 
-def generate_info(nusc, scenes, max_cam_sweeps=6, max_lidar_sweeps=10):
+def generate_info(nusc, scenes, rainOnly = False, max_cam_sweeps=6, max_lidar_sweeps=10):
     infos = list()
     rainIdx = list()
     for cur_scene in tqdm(nusc.scene):
         if cur_scene['name'] not in scenes:
             continue
+        #Skip the non rain scenes if we're looking for rain only scenes
+        if not isRain(nusc.get('scene', cur_scene['token'])['description']) and rainOnly: 
+            continue
+
         first_sample_token = cur_scene['first_sample_token']
         cur_sample = nusc.get('sample', first_sample_token)
         while True:
@@ -184,6 +188,16 @@ def main():
     print('Number of Rain Samples in validation set: %i', (len(valRain)))
     mmcv.dump(val_infos, '../data/nuScenes/nuscenes_infos_val.pkl')
     mmcv.dump(valRain, '../data/nuScenes/nuscenes_rainIdx_val.pkl')
+
+    print('Starting TrainRain...')
+    train_infos, trainRain = generate_info(trainval_nusc, train_scenes, rainOnly = True)
+    print('Number of Rain Samples in training set: %i', (len(trainRain)))
+    mmcv.dump(train_infos, '../data/nuScenes/nuscenes_infos_trainRain.pkl')
+    print('Starting ValRain...')
+    val_infos, valRain = generate_info(trainval_nusc, val_scenes, rainOnly = True)
+    print('Number of Rain Samples in validation set: %i', (len(valRain)))
+    mmcv.dump(val_infos, '../data/nuScenes/nuscenes_infos_valRain.pkl')
+   
 
     # test_nusc = NuScenes(version='v1.0-test',
     #                      dataroot='./data/nuScenes/v1.0-test/',

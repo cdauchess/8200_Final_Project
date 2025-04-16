@@ -443,6 +443,7 @@ class NuscDatasetRadarDet(Dataset):
             radar_idx = self.sample_radar_augmentation()
 
             for sweep_idx, cam_info in enumerate(cam_infos):
+                #TODO - Add conditionals to handle new cleansed images
                 img = Image.open(
                     os.path.join(self.data_root, cam_info[cam]['filename']))
 
@@ -503,6 +504,7 @@ class NuscDatasetRadarDet(Dataset):
                 intrin_mat[:3, :3] = torch.Tensor(
                     cam_info[cam]['calibrated_sensor']['camera_intrinsic'])
 
+                #TODO - add conditional to handle new cleansed images
                 file_name = os.path.split(cam_info[cam]['filename'])[-1]
                 if self.return_depth:
                     point_depth = np.fromfile(os.path.join(
