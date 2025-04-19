@@ -21,7 +21,7 @@ class NS_ImageLoader():
         if subSet == 'train':
             self.infoPath = self.dataRoot+"nuscenes_infos_train.pkl"
         elif subSet == 'val':
-            self.infoPath = self.dataRoot+"nuscenes_infos_train.pkl"
+            self.infoPath = self.dataRoot+"nuscenes_infos_val.pkl"
 
         self.infos = mmcv.load(self.infoPath)
         
@@ -67,7 +67,7 @@ class NS_ImageLoader():
         
 
 if __name__ == '__main__':
-    dataRoot = "../data/nuScenes/"
+    dataRoot = "/scratch/cdauche/CRN/data/nuScenes/"
     loader = NS_ImageLoader(dataRoot, 'val')
     temp = loader.imageFiles(onlyRain = True)
 
@@ -77,6 +77,8 @@ if __name__ == '__main__':
         print(temp)
         i+=1
 
+
     pic = Image.open(temp)
+    print(pic.size)
     pic = pic.save('ChosenNuscenesImage.jpg')
 
