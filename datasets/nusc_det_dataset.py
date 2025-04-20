@@ -134,7 +134,8 @@ class NuscDatasetRadarDet(Dataset):
                  use_cbgs=False,
                  gt_for_radar_only=False,
                  sweep_idxes=list(),
-                 key_idxes=list()):
+                 key_idxes=list(),
+                 clean_method=None):
         """Dataset used for bevdetection task.
         Args:
             ida_aug_conf (dict): Config for ida augmentation.
@@ -182,6 +183,7 @@ class NuscDatasetRadarDet(Dataset):
 
         self.remove_z_axis = remove_z_axis
         self.gt_for_radar_only = gt_for_radar_only
+        self.clean_method = clean_method
 
         assert sum([sweep_idx >= 0 for sweep_idx in sweep_idxes]) \
             == len(sweep_idxes), 'All `sweep_idxes` must greater \
@@ -428,6 +430,7 @@ class NuscDatasetRadarDet(Dataset):
         sweep_timestamps = list()
         sweep_gt_depths = list()
         sweep_radar_points = list()
+        firstPrint = 0 #Debugging flag to make sure the proper files are being used. Set to 1 to print file paths during running
         for cam in cams:
             imgs = list()
             sensor2ego_mats = list()
@@ -444,8 +447,16 @@ class NuscDatasetRadarDet(Dataset):
 
             for sweep_idx, cam_info in enumerate(cam_infos):
                 #TODO - Add conditionals to handle new cleansed images
-                img = Image.open(
-                    os.path.join(self.data_root, cam_info[cam]['filename']))
+                if self.clean_method == None:
+                    img = Image.open(
+                        os.path.join(self.data_root, cam_info[cam]['filename']))
+                elif self.clean_method == 'DRD':
+                    initPath = os.path.join(self.data_root, cam_info[cam]['filename']).split('.')[0] #Remove the .jpg extension
+                    imgPath = initPath +'_DRD_C.jpg'  #Add DRD extension to the path, return .jpg to path
+                    if firstPrint == 1:
+                        print('Image Path: %s' %imgPath)
+                        firstPrint = 0
+                    img = Image.open(imgPath)
 
                 w, x, y, z = cam_info[cam]['calibrated_sensor']['rotation']
                 # sweep sensor to sweep ego
@@ -504,7 +515,6 @@ class NuscDatasetRadarDet(Dataset):
                 intrin_mat[:3, :3] = torch.Tensor(
                     cam_info[cam]['calibrated_sensor']['camera_intrinsic'])
 
-                #TODO - add conditional to handle new cleansed images
                 file_name = os.path.split(cam_info[cam]['filename'])[-1]
                 if self.return_depth:
                     point_depth = np.fromfile(os.path.join(

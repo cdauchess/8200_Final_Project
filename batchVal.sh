@@ -23,6 +23,6 @@ module load anaconda3
 module load cuda/11.8.0
 
 source activate CRN
-echo "Starting"
-srun python ./exps/det/CRN_r50_256x704_128x128_4key.py --ckpt_path ./models/CRN_r50_256x704_128x128_4key.pth -e -b 1 --gpus 1
+echo "Starting DeRaindrop Validation"
+srun python ./exps/det/CRN_r50_256x704_128x128_4key_CDD_DRD.py --ckpt_path ./models/CRN_r50_256x704_128x128_4key.pth -e -b 1 --gpus 1
 echo "Evaluation Complete"

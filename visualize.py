@@ -210,7 +210,7 @@ def demo(
         plt.axis('off')
         plt.xlim(0, 1600)
         plt.ylim(900, 0)
-
+        #TODO - Add conditionals to load the correct cleansed image
         img = mmcv.imread(
             os.path.join('data/nuScenes', info['cam_infos'][k]['filename']))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)

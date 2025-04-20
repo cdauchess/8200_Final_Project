@@ -2,6 +2,7 @@ import os
 
 import mmcv
 from PIL import Image
+import cv2
 
 from tqdm import tqdm
 
@@ -63,6 +64,11 @@ class NS_ImageLoader():
             self.curCam +=1
 
         return fileReturn
+
+    def saveImage(self, newImage, origFileName, extension):
+        img_name = origFileName.split('.')[0]
+        newName = img_name + extension + '.jpg'
+        cv2.imwrite(newName, newImage)
 
         
 
