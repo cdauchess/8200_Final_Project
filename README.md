@@ -1,21 +1,6 @@
 # CRN: Camera Radar Net for Accurate, Robust, Efficient 3D Perception
 
-https://github.com/youngskkim/CRN/assets/24770858/1bf85a3a-ad22-4875-ab0c-deeee347b03f
-
-> [**CRN: Camera Radar Net for Accurate, Robust, Efficient 3D Perception**](https://arxiv.org/abs/2304.00670)  
-> [Youngseok Kim](https://youngskkim.github.io/),
-> Juyeb Shin, Sanmin Kim, In-Jae Lee, 
-> [Jun Won Choi](https://www.spa.hanyang.ac.kr/),
-> [Dongsuk Kum](http://vdclab.kaist.ac.kr/)  
-> [*ICCV 2023*](https://iccv2023.thecvf.com/)
-
-
-## Abstract
-In this paper, we propose Camera Radar Net (CRN), a novel camera-radar fusion framework that generates a semantically rich and spatially accurate bird's-eye-view (BEV) feature map for various tasks.
-To overcome the lack of spatial information in an image, we transform perspective view image features to BEV with the help of sparse but accurate radar points.
-We further aggregate image and radar feature maps in BEV using multi-modal deformable attention designed to tackle the spatial misalignment between inputs.
-CRN with real-time setting operates at 20 FPS while achieving comparable performance to LiDAR detectors on nuScenes, and even outperforms at a far distance on 100m setting.
-Moreover, CRN with offline setting yields 62.4% NDS, 57.5% mAP on nuScenes test set and ranks first among all camera and camera-radar 3D object detectors.
+Forked from original CRN work: https://github.com/youngskkim/CRN
 
 
 ## Getting Started
@@ -101,41 +86,22 @@ python [EXP_PATH] --amp_backend native -b 4 --gpus 4
 python [EXP_PATH] --ckpt_path [CKPT_PATH] -e -b 4 --gpus 4
 ```
 
-## Model Zoo
-All models use 4 keyframes and are trained without CBGS.  
-All latency numbers are measured with batch size 1, GPU warm-up, and FP16 precision.
 
-|  Method  | Backbone | NDS  | mAP  | FPS  | Params | Config                                                  | Checkpoint                                                                                                  |
-|:--------:|:--------:|:----:|:----:|:----:|:------:|:-------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------:|
-| BEVDepth |   R50    | 47.1 | 36.7 | 29.7 | 77.6 M | [config](exps/det/BEVDepth_r50_256x704_128x128_4key.py) | [model](https://github.com/youngskkim/CRN/releases/download/v1.0/BEVDepth_r50_256x704_128x128_4key.pth) |
-|   CRN    |   R18    | 54.2 | 44.9 | 29.4 | 37.2 M | [config](exps/det/CRN_r18_256x704_128x128_4key.py)      | [model](https://github.com/youngskkim/CRN/releases/download/v1.0/CRN_r18_256x704_128x128_4key.pth)      |
-|   CRN    |   R50    | 56.2 | 47.3 | 22.7 | 61.4 M | [config](exps/det/CRN_r50_256x704_128x128_4key.py)      | [model](https://github.com/youngskkim/CRN/releases/download/v1.0/CRN_r50_256x704_128x128_4key.pth)      |
+### Image Cleansing
 
+* To cleanse with DeRaindrop see batch file /DeRaindrop/batchDerainDrop.sh
+* To cleanse and evaluate with CRN with Transweather see batch file /new-Transweather/TWeather_cleanse.sh
+* To cleanse and evaluate with both UtilityIR settings see batch file /utilityIR/utilityIR_Palmetto/UtilIR_NS_Conv.sh
 
-## Features
-- [ ] BEV segmentation checkpoints 
-- [ ] BEV segmentation code 
-- [x] 3D detection checkpoints 
-- [x] 3D detection code 
-- [x] Code release 
+### CRN Evaluate of Cleansed Images
+A new experiment is made for each cleansing method. The experiment files are located at the following directory: /exps/det/
 
+The nuScenes dataloader was modified with an additional field to indicate the image cleansing to be used. 
 
-## Acknowledgement
-This project is based on excellent open source projects:
-- [BEVDepth](https://github.com/Megvii-BaseDetection/BEVDepth)
-- [BEVFormer](https://github.com/fundamentalvision/BEVFormer)
-- [MMDetection3D](https://github.com/open-mmlab/mmdetection3d)
+The options are as follows:
+* None - loads the stock nuScenes images
+* 'DRD' - loads the DeRaindrop cleansed images
+* 'UtilIR1' - loads the UtilityIR1 cleansed images
+* 'UtilIR2' - loads the UtilityIR2 cleansed images
+* 'TransW' - loads the TransWeather cleansed images
 
-
-## Citation
-If this work is helpful for your research, please consider citing the following BibTeX entry.
-
-```bibtex
-@inproceedings{kim2023crn,
-    title={Crn: Camera radar net for accurate, robust, efficient 3d perception},
-    author={Kim, Youngseok and Shin, Juyeb and Kim, Sanmin and Lee, In-Jae and Choi, Jun Won and Kum, Dongsuk},
-    booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
-    pages={17615--17626},
-    year={2023}
-}
-```
