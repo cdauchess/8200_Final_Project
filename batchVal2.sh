@@ -4,7 +4,7 @@
 
 #SBATCH --ntasks 1           # number of tasks
 #SBATCH --cpus-per-task 12   # number of cpu cores per task
-#SBATCH --time 12:00:00      # walltime
+#SBATCH --time 2:00:00      # walltime
 #SBATCH --mem 48gb           # amount of memory per CPU core (Memory per Task / Cores per Task)
 #SBATCH --nodes 1            # number of nodes
 #SBATCH --gpus-per-task a100:1 # gpu model and amount requested
@@ -22,18 +22,8 @@ cd /project/bli4/maps/CD_RC_SL_8200Project/8200_Final_Project/ #Path to CRN repo
 module load anaconda3
 module load cuda/11.8.0
 
-source activate DeRain2
-
-cd ./DeRaindrop #Path to CRN repo
-
-echo "Starting DeRaindrop Deraining"
-srun python predict.py --mode demo 
-echo "Draining Complete"
-
-cd /project/bli4/maps/CD_RC_SL_8200Project/8200_Final_Project/ #Path to CRN repo
 source activate CRN
-echo "Starting Stock CRN Validation"
-srun python ./exps/det/CRN_r50_256x704_128x128_4key.py --ckpt_path ./models/CRN_r50_256x704_128x128_4key.pth -e -b 1 --gpus 1
+
 
 echo "Starting DeRaindrop Validation"
 srun python ./exps/det/CRN_r50_256x704_128x128_4key_CDD_DRD.py --ckpt_path ./models/CRN_r50_256x704_128x128_4key.pth -e -b 1 --gpus 1

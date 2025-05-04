@@ -29,5 +29,5 @@ source activate CRN
 echo "12 cores, 128 gb ram, 2x A100 80gb GPU"
 
 echo "Starting"
-srun python ./exps/det/CRN_r50_256x704_128x128_4key_CDD.py --amp_backend native -b 16 --gpus 2
+srun python ./exps/det/CRN_r50_256x704_128x128_4key.py --amp_backend native -b 16 --gpus 2
 echo "Training Complete"

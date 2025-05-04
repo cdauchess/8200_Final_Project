@@ -457,6 +457,27 @@ class NuscDatasetRadarDet(Dataset):
                         print('Image Path: %s' %imgPath)
                         firstPrint = 0
                     img = Image.open(imgPath)
+                elif self.clean_method == 'UtilIR1':
+                    initPath = os.path.join(self.data_root, cam_info[cam]['filename']).split('.')[0] #Remove the .jpg extension
+                    imgPath = initPath +'_UtilIR1.jpg'  #Add Utility IR extension to the path, return .jpg to path
+                    if firstPrint == 1:
+                        print('Image Path: %s' %imgPath)
+                        firstPrint = 0
+                    img = Image.open(imgPath)
+                elif self.clean_method == 'UtilIR2':
+                    initPath = os.path.join(self.data_root, cam_info[cam]['filename']).split('.')[0] #Remove the .jpg extension
+                    imgPath = initPath +'_UtilIR2.jpg'  #Add Utility IR extension to the path, return .jpg to path
+                    if firstPrint == 1:
+                        print('Image Path: %s' %imgPath)
+                        firstPrint = 0
+                    img = Image.open(imgPath)
+                elif self.clean_method == 'TransW':
+                    initPath = os.path.join(self.data_root, cam_info[cam]['filename']).split('.')[0] #Remove the .jpg extension
+                    imgPath = initPath +'_TransW.jpg'  #Add Utility IR extension to the path, return .jpg to path
+                    if firstPrint == 1:
+                        print('Image Path: %s' %imgPath)
+                        firstPrint = 0
+                    img = Image.open(imgPath)
 
                 w, x, y, z = cam_info[cam]['calibrated_sensor']['rotation']
                 # sweep sensor to sweep ego

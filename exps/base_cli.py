@@ -48,6 +48,7 @@ def run_cli(model_class=BEVDepthLightningModel,
                         precision=16,
                         default_root_dir=os.path.join('./outputs/', exp_name))
     args = parser.parse_args()
+    print(os.getcwd())
     if args.seed is not None:
         pl.seed_everything(args.seed)
 

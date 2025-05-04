@@ -23,9 +23,7 @@ from tqdm import tqdm
 
 import matplotlib.pyplot as plt
 import sys
-sys.path.insert(1, '/scratch/cdauche/CRN/datasets')
-
-
+sys.path.insert(1, '/project/bli4/maps/CD_RC_SL_8200Project/8200_Final_Project/datasets')
 from GetNuScImage import NS_ImageLoader
 
 def get_args():
@@ -314,11 +312,17 @@ def predict(image):
 
     out = model(image)[-1]
 
+    
+
     out = out.cpu().data
     out = out.numpy()
+
     out = out.transpose((0, 2, 3, 1))
+    print(out.shape)
     out = out[0, :, :, :]*255.
-    
+
+    print(out.shape)
+    #cv2.imwrite('./demo/maskSave/mask.png', out)
     return out
 
 def outputCompare(original, result, inName):
@@ -353,11 +357,12 @@ if __name__ == '__main__':
     print("Loading Weights...")
     model.load_state_dict(torch.load('./weights/gen.pkl'))
 
-    print('Loading Image List...')
-    dataRoot = "/scratch/cdauche/CRN/data/nuScenes/"
-    DL = NS_ImageLoader(dataRoot, 'val')
+    
 
     if args.mode == 'demo':
+        print('Loading Image List...')
+        dataRoot = "/project/bli4/maps/CD_RC_SL_8200Project/8200_Final_Project/data/nuScenes/"
+        DL = NS_ImageLoader(dataRoot, 'val')
         #input_list = sorted(os.listdir(args.input_dir))
         input_list = DL.imageFiles(onlyRain=False) #Load a list of all files to be cleansed
         num = len(input_list)
@@ -381,6 +386,29 @@ if __name__ == '__main__':
                 print('Saving Image: %s' %(img_name + '_DRD_C' + '.jpg')) #Add file extension to indicate new File
                 cv2.imwrite(img_name + '_DRD_C' + '.jpg', result)
                 outputCompare(Origimg,result,fileName.split('.')[0]) #Save a comparison of the original and derained image
+
+    if args.mode =='smallTest':
+        input_list = sorted(os.listdir(args.input_dir))
+        num = len(input_list)
+        for i in tqdm(range(num)):
+
+            fileName = input_list[i].split('/')[-1]
+            print ('Processing image: %s'%(input_list[i]))
+            Origimg = cv2.imread(args.input_dir + input_list[i])
+            #img = resizeIm(Origimg)
+            #img = resize_image(Origimg,720,480, method = ResizeMethod.STRETCH)
+            img = downscale_image(Origimg, 720,480)
+            img = align_to_four(img)
+            result = predict(img)
+            #outputCompare(img,result,(input_list[i]+'-smallRes'))
+            #result = upscale_image_with_padding(result,1600,900)
+            #result = upscale_noPad(result)
+            result = resize_image(result, 1600, 900, method= ResizeMethod.CROP)
+            img_name = input_list[i].split('.')[0]
+            #cv2.imwrite(args.output_dir + img_name + '.jpg', result)
+            print('Saving Image: %s' %(img_name + '_DRD_C' + '.jpg')) #Add file extension to indicate new File
+            cv2.imwrite(args.output_dir + img_name + '_DRD_C' + '.jpg', result)
+            #outputCompare(Origimg,result,fileName.split('.')[0]) #Save a comparison of the original and derained image
 
 
     elif args.mode == 'test':

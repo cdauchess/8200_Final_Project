@@ -180,6 +180,11 @@ class Generator(nn.Module):
             h = o * F.tanh(c)
             mask = self.det_conv_mask(h)
             mask_list.append(mask)
+        #temp = mask.cpu().data
+        #temp = temp.numpy()
+        #print(temp.shape)
+        #tempImg = cv2.applyColorMap(temp[0,0,:,:]*255.0, cv2.COLORMAP_JET)
+        #cv2.imwrite('./demo/maskSave/mask.png', temp[0,0,:,:]*255.0)
         x = torch.cat((input, mask), 1)
         x = self.conv1(x)
         res1 = x

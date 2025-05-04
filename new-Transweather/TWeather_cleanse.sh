@@ -22,23 +22,16 @@ cd /project/bli4/maps/CD_RC_SL_8200Project/8200_Final_Project/ #Path to CRN repo
 module load anaconda3
 module load cuda/11.8.0
 
-source activate DeRain2
+cd /project/bli4/maps/CD_RC_SL_8200Project/8200_Final_Project/new-Transweather
+source activate new_transweather
+echo "Starting Trans weather image cleansing"
+srun python test_NS_VAL.py
+echo "Trans weather image cleansing complete"
 
-cd ./DeRaindrop #Path to CRN repo
-
-echo "Starting DeRaindrop Deraining"
-srun python predict.py --mode demo 
-echo "Draining Complete"
 
 cd /project/bli4/maps/CD_RC_SL_8200Project/8200_Final_Project/ #Path to CRN repo
 source activate CRN
-echo "Starting Stock CRN Validation"
-srun python ./exps/det/CRN_r50_256x704_128x128_4key.py --ckpt_path ./models/CRN_r50_256x704_128x128_4key.pth -e -b 1 --gpus 1
 
-echo "Starting DeRaindrop Validation"
-srun python ./exps/det/CRN_r50_256x704_128x128_4key_CDD_DRD.py --ckpt_path ./models/CRN_r50_256x704_128x128_4key.pth -e -b 1 --gpus 1
-
-echo "Starting Utility IR Validation"
-srun python ./exps/det/CRN_r50_256x704_128x128_4key_CDD_UtilityIR.py --ckpt_path ./models/CRN_r50_256x704_128x128_4key.pth -e -b 1 --gpus 1
-
+echo "Starting TransWeather Validation"
+srun python ./exps/det/CRN_r50_256x704_128x128_4key_CDD_TransW.py --ckpt_path ./models/CRN_r50_256x704_128x128_4key.pth -e -b 1 --gpus 1
 echo "Evaluation Complete"

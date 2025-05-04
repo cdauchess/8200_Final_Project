@@ -7,6 +7,11 @@ data/
 vis/
 DeRaindrop/demo/
 *.out
+*.zip
+results/
+__MACOSX/
+outputCompare/
+
 
 # temporary files which can be created if a process still has a handle open of a deleted file
 .fuse_hidden*

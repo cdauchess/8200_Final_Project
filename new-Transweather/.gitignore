@@ -1,0 +1,15 @@
+# image files for input and ground truth
+data/*/*/gt
+data/*/*/input
+
+# cache
+__pycache__
+
+# weights
+weights
+
+# results
+results
+
+# vscode setting
+.vscode
